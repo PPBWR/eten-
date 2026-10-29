@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { dayInfo, programDays, slotFilled, partOptions, KIES, openDays, photoBg } from './logic.js';
+import { dayInfo, programDays, slotFilled, openDays, photoBg, samenSummary } from './logic.js';
 import { IcGear } from './icons.jsx';
 
 export async function shareText(text, say) {
@@ -98,7 +98,7 @@ function DayRow({ day, ctx, isStd }) {
   else if (m) {
     title = m.name; strong = true;
     const bits = [];
-    if (m.type === 'samen') (m.parts || []).forEach((pt, k) => { const o = partOptions(pt)[(s.picks || [])[k] || 0] || { name: KIES }; bits.push(o.name === KIES ? pt.letter + ': in de winkel' : o.name); });
+    if (m.type === 'samen') { const sum = samenSummary(m, s.picks); if (sum) bits.push(sum); }
     if (s.extras && s.extras.length) bits.push('+ ' + s.extras.join(', '));
     sub = bits.join(' · ');
   } else if (s.mode === 'cat' && cat) title = cat.name + ' · nog kiezen';

@@ -45,6 +45,18 @@ export const parseNum = (v) => { const n = parseFloat(String(v).replace(',', '.'
 // Opties van een onderdeel, met "Kies ik in de winkel" altijd vooraan.
 export const partOptions = (part) => [{ name: KIES, ingredients: [] }].concat(part.options || []);
 
+// Korte opsomming van een samengestelde maaltijd voor de week, zonder aardappelen.
+export function samenSummary(meal, picks) {
+  return (meal.parts || [])
+    .filter((pt) => !/^aardappel/i.test((pt.name || '').trim()))
+    .map((pt, k0) => {
+      const k = (meal.parts || []).indexOf(pt);
+      const o = partOptions(pt)[(picks || [])[k] || 0] || { name: KIES };
+      return o.name === KIES ? (pt.name || '').toLowerCase() + ' naar keuze' : o.name;
+    })
+    .join(', ');
+}
+
 export function slotFilled(slot) { return !!(slot && (slot.meal_id || slot.mark)); }
 
 // Statistiek per maaltijd uit de planning (dagen t/m vandaag tellen als gegeten).

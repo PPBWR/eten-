@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { dayInfo, openDays, programOf, range, score, partOptions, KIES, catTint, photoBg } from './logic.js';
+import { dayInfo, openDays, programOf, range, score, partOptions, KIES, catTint, photoBg, samenSummary } from './logic.js';
 import { IcX, IcUp, IcDown } from './icons.jsx';
 
 // "Wat de pot schaft": open dagen willekeurig (maar slim) vullen, vastzetten, opnieuw husselen.
@@ -107,7 +107,7 @@ export default function Pot({ ctx, onStop }) {
           const m = r.mealId ? d.mealsById[r.mealId] : null;
           const info = dayInfo(r.day);
           const photo = m && m.photo_path ? photoUrls[m.photo_path] : null;
-          const sub = m && m.type === 'samen' ? (m.parts || []).map((pt, j) => { const o = partOptions(pt)[(r.picks || [])[j] || 0] || { name: KIES }; return o.name === KIES ? pt.letter + ': in de winkel' : o.name; }).join(' · ') : '';
+          const sub = m && m.type === 'samen' ? samenSummary(m, r.picks) : '';
           const set = (patch) => setRows(rows.map((o, j) => (j === k ? Object.assign({}, o, patch) : o)));
           return (
             <div key={r.day} style={Object.assign({ display: 'flex', alignItems: 'center', gap: 10, minHeight: 66, padding: '8px 6px 8px 8px', borderRadius: 14, border: '1px solid ' + (r.locked ? 'var(--green-line)' : '#2A342F'), background: r.saved ? '#16201B' : r.locked ? '#1E2E25' : 'var(--surface2)', opacity: r.saved ? 0.75 : 1 }, photo ? photoBg(photo) : null)} className={photo ? 'has-photo' : ''}>
