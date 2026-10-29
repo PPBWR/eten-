@@ -138,7 +138,7 @@ function Main() {
         await run((d) => Object.assign({}, d, { categories: updated }), () => Promise.all([api.updateCategory(updated[i].id, { position: i }), api.updateCategory(updated[j].id, { position: j })]));
       },
       saveMeal: async (draft, photoBlob) => {
-        const fields = { name: draft.name.trim(), category_id: draft.category_id || null, type: draft.type, prep: draft.prep || '', extras_on: !!draft.extras_on, extras: draft.extras || [], ingredients: draft.ingredients || [], parts: draft.parts || [], archived: !!draft.archived };
+        const fields = { name: draft.name.trim(), category_id: draft.category_id || null, type: draft.type, prep: draft.prep || '', extras_on: !!draft.extras_on, extras: draft.extras || [], ingredients: draft.ingredients || [], parts: (draft.parts || []).filter((pt) => (pt.name || '').trim()).map((pt) => Object.assign({}, pt, { name: pt.name.trim(), letter: (pt.letter || pt.name.trim().charAt(0)).toUpperCase() })), archived: !!draft.archived };
         let row = draft.id ? await run(null, () => api.updateMeal(draft.id, fields)) : await run(null, () => api.insertMeal(Object.assign({ household_id: hid }, fields)));
         if (!row) return null;
         if (photoBlob) {

@@ -231,20 +231,48 @@ function IngredientEditor({ items, onChange, known, afdList }) {
   );
 }
 
-function PartsEditor({ parts, onChange, known, afdList }) {
+const PART = (name, letter, afd) => ({ name, letter, afd, options: [] });
+const TEMPLATES = {
+  agv: () => [PART('Aardappelen', 'A', 'AGF'), PART('Groente', 'G', 'AGF'), PART('Vlees / vis / vega', 'V', 'Vlees & vis')],
+  twee: () => [PART('', '', 'Overig'), PART('', '', 'Overig')],
+  drie: () => [PART('', '', 'Overig'), PART('', '', 'Overig'), PART('', '', 'Overig')]
+};
+
+function PartsEditor({ parts, onChange, known, afdList, showTemplates }) {
   const [open, setOpen] = useState(null); // "k-i" van optie met open ingrediënten
   const [newOpt, setNewOpt] = useState({});
-  const [newPart, setNewPart] = useState('');
   const upd = (k, patch) => onChange(parts.map((p, j) => (j === k ? Object.assign({}, p, patch) : p)));
+  const examples = ['spaghetti', 'rode saus', 'kipfilet'];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {showTemplates && (
+        <>
+          <div className="muted small">Opzet (kies er een, of pas hieronder zelf aan)</div>
+          <div className="chips">
+            <button className="chip" onClick={() => onChange(TEMPLATES.agv())}>A · G · V</button>
+            <button className="chip" onClick={() => onChange(TEMPLATES.twee())}>2 onderdelen</button>
+            <button className="chip" onClick={() => onChange(TEMPLATES.drie())}>3 onderdelen</button>
+          </div>
+        </>
+      )}
       {parts.map((pt, k) => (
         <div key={k} className="card" style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 8, background: 'var(--bg)' }}>
           <div className="row between">
-            <div style={{ fontWeight: 600 }}><span style={{ color: 'var(--green-ink)' }}>{pt.letter}</span> · {pt.name}</div>
-            <button className="icon-btn plain" style={{ color: 'var(--warn-ink)' }} aria-label={'Onderdeel ' + pt.name + ' verwijderen'} onClick={() => onChange(parts.filter((x, j) => j !== k))}><IcTrash size={18} /></button>
+            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--green-ink)' }}>Onderdeel {k + 1}</div>
+            {parts.length > 1 && <button className="btn btn-danger-text" style={{ minHeight: 36, padding: '0 8px', fontSize: 14 }} onClick={() => onChange(parts.filter((x, j) => j !== k))}>Verwijderen</button>}
           </div>
-          <div className="muted small">Eerste keuze is altijd "{KIES}".</div>
+          <div className="row" style={{ alignItems: 'flex-end' }}>
+            <div className="field" style={{ flex: 1 }}>
+              <label className="muted small" htmlFor={'pn-' + k}>Naam</label>
+              <input id={'pn-' + k} className="input" style={{ minHeight: 46, fontSize: 16 }} value={pt.name} placeholder="Bijv. Pastasoort"
+                onChange={(e) => { const v = e.target.value; const auto = !pt.letter || pt.letter === (pt.name || '').charAt(0).toUpperCase(); upd(k, auto ? { name: v, letter: v.charAt(0).toUpperCase() } : { name: v }); }} />
+            </div>
+            <div className="field" style={{ width: 64, flex: 'none' }}>
+              <label className="muted small" htmlFor={'pl-' + k}>Letter</label>
+              <input id={'pl-' + k} className="input" style={{ minHeight: 46, fontSize: 18, fontWeight: 700, textAlign: 'center', color: 'var(--green-ink)', padding: '0 6px' }} maxLength={2} value={pt.letter || ''} onChange={(e) => upd(k, { letter: e.target.value.slice(0, 2).toUpperCase() })} />
+            </div>
+          </div>
+          <div className="muted small">Soorten. De eerste keuze is altijd "{KIES}".</div>
           {(pt.options || []).map((o, i) => {
             const key = k + '-' + i;
             return (
@@ -259,17 +287,14 @@ function PartsEditor({ parts, onChange, known, afdList }) {
             );
           })}
           <div className="row">
-            <label className="sr" htmlFor={'opt-' + k}>Nieuwe soort voor {pt.name}</label>
-            <input id={'opt-' + k} className="input" style={{ minHeight: 44, fontSize: 16 }} value={newOpt[k] || ''} onChange={(e) => setNewOpt(Object.assign({}, newOpt, { [k]: e.target.value }))} placeholder={'Nieuwe soort, bijv. ' + (k === 0 ? 'Puree' : k === 1 ? 'Broccoli' : 'Kipfilet')} />
+            <label className="sr" htmlFor={'opt-' + k}>Nieuwe soort voor {pt.name || 'onderdeel ' + (k + 1)}</label>
+            <input id={'opt-' + k} className="input" style={{ minHeight: 44, fontSize: 16 }} value={newOpt[k] || ''} onChange={(e) => setNewOpt(Object.assign({}, newOpt, { [k]: e.target.value }))} placeholder={'Bijv. ' + examples[k % 3]} />
             <button className="btn" style={{ minHeight: 44, padding: '0 14px' }} disabled={!(newOpt[k] || '').trim()} onClick={() => { upd(k, { options: (pt.options || []).concat([{ name: newOpt[k].trim(), ingredients: [] }]) }); setNewOpt(Object.assign({}, newOpt, { [k]: '' })); }}>Toevoegen</button>
           </div>
         </div>
       ))}
-      <div className="row">
-        <label className="sr" htmlFor="new-part">Nieuw onderdeel</label>
-        <input id="new-part" className="input" style={{ minHeight: 44, fontSize: 16 }} value={newPart} onChange={(e) => setNewPart(e.target.value)} placeholder="Nieuw onderdeel, bijv. Saus" />
-        <button className="btn btn-ghost" style={{ minHeight: 44, padding: '0 14px' }} disabled={!newPart.trim()} onClick={() => { const nm = newPart.trim(); onChange(parts.concat([{ name: nm, letter: nm.charAt(0).toUpperCase(), afd: 'Overig', options: [] }])); setNewPart(''); }}>Toevoegen</button>
-      </div>
+      {parts.length < 3 && <button className="btn btn-ghost" style={{ borderStyle: 'dashed', borderRadius: 14 }} onClick={() => onChange(parts.concat([PART('', '', 'Overig')]))}>+ Onderdeel toevoegen</button>}
+      <div className="muted small">Maximaal 3 onderdelen. Toppings zoals kaas of rucola zet je bij Extra hieronder.</div>
     </div>
   );
 }
@@ -302,9 +327,7 @@ function EditSheet({ ctx, meal, categoryId, close }) {
     setBusy(false);
     if (r) { if (r.archived) close(); else ctx.setSheet({ type: 'detail', mealId: r.id }); }
   };
-  const setType = (t) => set(t === 'samen' && !(m.parts || []).length
-    ? { type: t, parts: [{ name: 'Aardappelen', letter: 'A', afd: 'AGF', options: [] }, { name: 'Groente', letter: 'G', afd: 'AGF', options: [] }, { name: 'Vlees / vis / vega', letter: 'V', afd: 'Vlees & vis', options: [] }] }
-    : { type: t });
+  const setType = (t) => set(t === 'samen' && !(m.parts || []).length ? { type: t, parts: TEMPLATES.agv() } : { type: t });
 
   const shown = photoPreview || existingPhoto;
   return (
@@ -335,7 +358,7 @@ function EditSheet({ ctx, meal, categoryId, close }) {
       {m.type === 'samen' ? (
         <>
           <div className="label">Onderdelen en soorten</div>
-          <PartsEditor parts={m.parts || []} onChange={(v) => set({ parts: v })} known={known} afdList={afdList} />
+          <PartsEditor parts={m.parts || []} onChange={(v) => set({ parts: v })} known={known} afdList={afdList} showTemplates={!meal} />
         </>
       ) : (
         <>

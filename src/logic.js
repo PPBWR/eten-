@@ -126,8 +126,10 @@ export function shoppingLines({ programs, slotsByDay, mealsById, catsById, perso
         (m.parts || []).forEach((pt, k) => {
           const opts = partOptions(pt);
           const o = opts[(s.picks || [])[k] || 0] || opts[0];
-          if (!o.ingredients || !o.ingredients.length) {
-            add('kies|' + pt.name, { name: pt.name + ' naar keuze', q: persons, u: 'pers.', a: pt.afd || 'Overig', note: o.name === KIES ? 'Kies je in de winkel' : o.name });
+          if (o.name === KIES) {
+            add('kies|' + pt.name, { name: pt.name + ' naar keuze', q: persons, u: 'pers.', a: pt.afd || 'Overig', note: 'Kies je in de winkel' });
+          } else if (!o.ingredients || !o.ingredients.length) {
+            add('opt|' + o.name.toLowerCase(), { name: o.name, q: persons, u: 'pers.', a: pt.afd || 'Overig' });
           } else {
             o.ingredients.forEach((x) => add(x.n.toLowerCase() + '|' + x.u, { name: x.n, q: x.q ? x.q * persons : 0, u: x.u, a: x.a || 'Overig' }));
           }
