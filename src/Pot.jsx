@@ -79,7 +79,7 @@ export default function Pot({ ctx, onStop }) {
       <div className="page">
         <div className="row between"><h1>Wat de pot schaft</h1><button className="btn-pill" style={{ borderColor: 'var(--line)', color: 'var(--ink)' }} onClick={onStop}>Stoppen</button></div>
         <div className="card center muted" style={{ padding: '24px 16px' }}>Er zijn geen open dagen. Maak eerst een (nieuw) weekprogramma.</div>
-        <button className="btn" onClick={() => setSheet({ type: 'period' })}>Nieuw weekprogramma</button>
+        <button className="btn" onClick={() => setSheet({ type: 'period', then: 'pot' })}>Nieuw weekprogramma</button>
       </div>
     );
   }

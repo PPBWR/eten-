@@ -8,7 +8,7 @@ export default function Sheets({ ctx, sheet }) {
   let title = '', body = null;
   switch (sheet.type) {
     case 'slot': title = dayInfo(sheet.day).long; body = <SlotSheet ctx={ctx} day={sheet.day} close={close} />; break;
-    case 'period': title = 'Nieuw weekprogramma'; body = <PeriodSheet ctx={ctx} close={close} />; break;
+    case 'period': title = 'Nieuw weekprogramma'; body = <PeriodSheet ctx={ctx} close={close} then={sheet.then || 'week'} />; break;
     case 'detail': { const m = ctx.d.mealsById[sheet.mealId]; title = m ? m.name : ''; body = m ? <DetailSheet ctx={ctx} meal={m} /> : null; break; }
     case 'pickday': { const m = ctx.d.mealsById[sheet.mealId]; title = m ? 'Op een dag zetten' : ''; body = m ? <PickDaySheet ctx={ctx} meal={m} /> : null; break; }
     case 'edit': { const m = sheet.mealId ? ctx.d.mealsById[sheet.mealId] : null; title = m ? 'Maaltijd bewerken' : 'Maaltijd toevoegen'; body = <EditSheet ctx={ctx} meal={m} categoryId={sheet.categoryId} close={close} />; break; }
@@ -59,7 +59,7 @@ function SlotSheet({ ctx, day, close }) {
 }
 
 // ── Nieuw weekprogramma ─────────────────────────────────────────────
-function PeriodSheet({ ctx, close }) {
+function PeriodSheet({ ctx, close, then }) {
   const { d, actions, today } = ctx;
   const last = d.active.length ? d.active[d.active.length - 1].end_date : null;
   const min = last && last >= today ? addDays(last, 1) : today;
@@ -88,7 +88,7 @@ function PeriodSheet({ ctx, close }) {
         </div>
       </div>
       <div className="muted center">{len} {len === 1 ? 'dag' : 'dagen'}</div>
-      <button className="btn" disabled={busy} onClick={async () => { setBusy(true); const r = await actions.createProgram(start, end); setBusy(false); if (r) ctx.startSwipe({ mode: 'week' }); else close(); }}>Akkoord, ga swipen</button>
+      <button className="btn" disabled={busy} onClick={async () => { setBusy(true); const r = await actions.createProgram(start, end); setBusy(false); if (r) ctx.startSwipe({ mode: then }); else close(); }}>{then === 'pot' ? 'Akkoord, laat de pot beslissen' : 'Akkoord, ga swipen'}</button>
     </div>
   );
 }
