@@ -84,7 +84,7 @@ export default function Swipe({ ctx, req }) {
   if (!mode) {
     return (
       <div className="page">
-        <h1 style={{ marginBottom: 6 }}>Wat gaan we doen?</h1>
+        <h1 style={{ marginBottom: 6, textAlign: 'center' }}>Wat gaan we doen?</h1>
         <button className="choice primary" onClick={() => setMode('week')} disabled={!open.length}>
           <b>Weekprogramma vullen</b>
           <span>{open.length ? 'Nog ' + open.length + (open.length === 1 ? ' dag' : ' dagen') + ' open, vanaf ' + dayInfo(open[0]).long.toLowerCase() : 'Geen open dagen. Maak eerst een (nieuw) weekprogramma.'}</span>
