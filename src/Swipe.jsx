@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { dayInfo, openDays, buildDeck, partOptions, KIES, catTint } from './logic.js';
 import { IcX, IcCheck, IcUp, IcDown, IcInfo } from './icons.jsx';
+import Pot from './Pot.jsx';
 
 export default function Swipe({ ctx, req }) {
   const { db, d, actions, today, photoUrls, setSheet, setTab } = ctx;
@@ -81,6 +82,8 @@ export default function Swipe({ ctx, req }) {
     else if (s.strip != null) { if (s.dy < -24) step(s.strip, 1); else if (s.dy > 24) step(s.strip, -1); setStrip({ i: null, dy: 0 }); }
   };
 
+  if (mode === 'pot') return <Pot ctx={ctx} onStop={() => setMode(null)} />;
+
   if (!mode) {
     return (
       <div className="page">
@@ -94,6 +97,9 @@ export default function Swipe({ ctx, req }) {
         </button>
         <button className="choice" onClick={() => setMode('vanavond')}>
           <b>Vrij swipen voor vanavond</b><span>Gewoon kijken waar je trek in hebt</span>
+        </button>
+        <button className="choice" onClick={() => setMode('pot')}>
+          <b>Wat de pot schaft</b><span>Laat ons de keuze voor je maken</span>
         </button>
       </div>
     );
