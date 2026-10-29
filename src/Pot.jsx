@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { dayInfo, openDays, programOf, range, score, partOptions, KIES, catTint } from './logic.js';
+import { dayInfo, openDays, programOf, range, score, partOptions, KIES, catTint, photoBg } from './logic.js';
 import { IcX, IcUp, IcDown } from './icons.jsx';
 
 // "Wat de pot schaft": open dagen willekeurig (maar slim) vullen, vastzetten, opnieuw husselen.
@@ -110,13 +110,13 @@ export default function Pot({ ctx, onStop }) {
           const sub = m && m.type === 'samen' ? (m.parts || []).map((pt, j) => { const o = partOptions(pt)[(r.picks || [])[j] || 0] || { name: KIES }; return o.name === KIES ? pt.letter + ': in de winkel' : o.name; }).join(' · ') : '';
           const set = (patch) => setRows(rows.map((o, j) => (j === k ? Object.assign({}, o, patch) : o)));
           return (
-            <div key={r.day} style={{ display: 'flex', alignItems: 'center', gap: 10, minHeight: 66, padding: '8px 6px 8px 8px', borderRadius: 14, border: '1px solid ' + (r.locked ? 'var(--green-line)' : '#2A342F'), background: r.saved ? '#16201B' : r.locked ? '#1E2E25' : 'var(--surface2)', opacity: r.saved ? 0.75 : 1 }}>
+            <div key={r.day} style={Object.assign({ display: 'flex', alignItems: 'center', gap: 10, minHeight: 66, padding: '8px 6px 8px 8px', borderRadius: 14, border: '1px solid ' + (r.locked ? 'var(--green-line)' : '#2A342F'), background: r.saved ? '#16201B' : r.locked ? '#1E2E25' : 'var(--surface2)', opacity: r.saved ? 0.75 : 1 }, photo ? photoBg(photo) : null)} className={photo ? 'has-photo' : ''}>
               <div className="badge" style={Object.assign({ width: 44, height: 44 }, info.wkd ? { background: '#4A3A1F', color: '#F4D9A8' } : null)}><span>{info.dowCap}</span><b style={{ fontSize: 20 }}>{info.num}</b></div>
-              {m && <div style={{ width: 40, height: 40, flex: 'none', borderRadius: 10, backgroundSize: 'cover', backgroundPosition: 'center', background: photo ? 'center / cover url(' + photo + ')' : catTint(db.categories, m.category_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, opacity: 0.9 }}>{!photo && m.name.charAt(0)}</div>}
+              {m && !photo && <div style={{ width: 40, height: 40, flex: 'none', borderRadius: 10, backgroundSize: 'cover', backgroundPosition: 'center', background: photo ? 'center / cover url(' + photo + ')' : catTint(db.categories, m.category_id), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, opacity: 0.9 }}>{!photo && m.name.charAt(0)}</div>}
               <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start' }}>
                 <button style={{ border: 'none', background: 'transparent', padding: 0, textAlign: 'left', maxWidth: '100%' }} disabled={!m}
                   onClick={() => { if (!m) return; if (m.type === 'samen' && !r.saved) setPartsFor(k); else setSheet({ type: 'detail', mealId: m.id }); }}>
-                  <div style={{ fontSize: 16, fontWeight: m ? 600 : 500, color: m ? 'var(--ink)' : 'var(--warn-ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m ? m.name : r.note || 'Nog niets'}</div>
+                  <div style={{ fontSize: 16, fontWeight: m ? 600 : 500, color: m ? (photo ? '#fff' : 'var(--ink)') : 'var(--warn-ink)', textShadow: photo ? '0 1px 3px rgba(0,0,0,.6)' : 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m ? m.name : r.note || 'Nog niets'}</div>
                   {sub && <div className="muted" style={{ fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{sub}</div>}
                 </button>
                 {r.saved ? <span className="tag" style={{ background: '#1F3A2C', color: 'var(--green-ink)', fontSize: 12 }}>In weekmenu</span>
@@ -124,7 +124,7 @@ export default function Pot({ ctx, onStop }) {
               </div>
               {!r.saved && (
                 <>
-                  <button className="icon-btn plain" aria-label={'Alleen ' + info.long + ' opnieuw husselen'} disabled={r.locked} style={{ color: r.locked ? 'var(--line2)' : 'var(--green-ink)' }} onClick={() => setRows(shuffle(rows, k))}><IcShuffle /></button>
+                  <button className="icon-btn plain" aria-label={'Alleen ' + info.long + ' opnieuw husselen'} disabled={r.locked} style={{ color: r.locked ? 'var(--line2)' : 'var(--green-ink)', background: photo ? 'rgba(14,19,16,.6)' : 'transparent' }} onClick={() => setRows(shuffle(rows, k))}><IcShuffle /></button>
                   <button className="icon-btn" aria-pressed={!!r.locked} aria-label={r.locked ? 'Losmaken' : 'Vastzetten'} disabled={!m && !r.locked}
                     style={r.locked ? { border: 'none', background: 'var(--green)', color: '#fff' } : { background: 'var(--bg)', color: 'var(--muted)' }}
                     onClick={() => set({ locked: !r.locked })}><IcLock open={!r.locked} /></button>

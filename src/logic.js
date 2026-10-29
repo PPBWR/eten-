@@ -157,6 +157,12 @@ export function knownIngredients(meals) {
 }
 
 const CAT_TINTS = ['#1F3A2C', '#3A3120', '#352E24', '#3A2723', '#26361F', '#3A2531', '#212C3A', '#2C2738', '#1E3434', '#33302A'];
+// Achtergrond met foto en een donker verloop, zodat tekst leesbaar blijft.
+export const photoBg = (url) => ({
+  backgroundImage: 'linear-gradient(90deg, rgba(14,19,16,.94) 0%, rgba(14,19,16,.78) 45%, rgba(14,19,16,.35) 100%), url(' + url + ')',
+  backgroundSize: 'cover', backgroundPosition: 'center'
+});
+
 export function catTint(categories, id) {
   const i = categories.findIndex((c) => c.id === id);
   return i < 0 ? '#26302B' : CAT_TINTS[i % CAT_TINTS.length];

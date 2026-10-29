@@ -37,7 +37,7 @@ export default function Swipe({ ctx, req }) {
   const commit = (m) => {
     const day = target;
     const tonight = mode === 'vanavond' || (mode === 'one' && day === today);
-    const msg = tonight ? 'Vanavond eten we ' + m.name + '.' : m.name + ' staat op ' + dayInfo(day).long + '.';
+    const msg = tonight ? 'Vanavond eten we ' + m.name + '.' : m.name + ' staat op ' + dayInfo(day).long.toLowerCase() + '.';
     actions.assignMeal(day, m, m.type === 'samen' ? (m.parts || []).map((pt, k) => picks[k] || 0) : [], extraSel, msg);
     setSkipped((s) => s.filter((id) => id !== m.id));
     reset();

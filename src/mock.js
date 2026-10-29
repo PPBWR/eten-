@@ -22,7 +22,7 @@ function seed() {
     meal({ name: 'Spaghetti bolognese', category_id: C('Pasta'), ingredients: [ing('Spaghetti', 100, 'g', 'Houdbaar'), ing('Gehakt', 125, 'g', 'Vlees & vis')] }),
     meal({ name: 'Pizza', category_id: C('Bestellen/halen') }),
     meal({ name: 'Lasagne', category_id: C('Ovenschotel'), ingredients: [ing('Lasagnebladen', 4, 'stuks', 'Houdbaar'), ing('Gehakt', 125, 'g', 'Vlees & vis')] }),
-    meal({ name: 'Pannenkoeken', category_id: C('Lekker'), extras_on: true, extras: ['Stroop', 'Spek'] }),
+    meal({ name: 'Pannenkoeken', photo_path: 'demo-foto.jpg', category_id: C('Lekker'), extras_on: true, extras: ['Stroop', 'Spek'] }),
     meal({ name: 'Wraps', category_id: C('Variatie') }),
     meal({ name: 'Dahl', category_id: C('Variatie') })
   ];
@@ -70,5 +70,5 @@ export const mockApi = {
   async clearMarks() { load().marks = []; save(); return wait(); },
   async uploadPhoto() { return wait(); },
   async removePhoto() { return wait(); },
-  async photoUrls() { return {}; }
+  async photoUrls(paths) { const m = {}; paths.forEach((p) => { if (p.indexOf('demo-') === 0) m[p] = '/' + p; }); return m; }
 };

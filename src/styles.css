@@ -156,3 +156,11 @@ textarea.input { padding: 12px 14px; min-height: 120px; line-height: 1.4; resize
 .login { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 32px 24px; }
 .login .logo { font-size: 48px; font-weight: 700; color: var(--green-ink); line-height: 1; }
 .error { padding: 12px 14px; border-radius: 12px; background: var(--warn-bg); color: var(--warn-ink); font-size: 15px; }
+
+/* Regels met een foto als achtergrond */
+.has-photo .day-title, .has-photo .day-title.empty { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.has-photo .day-sub, .has-photo .muted { color: #E1EAE4; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.has-photo .day-chip { background: rgba(14,19,16,.7); color: #fff; }
+.has-photo .badge { box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+.has-photo .mini { background: rgba(14,19,16,.7); color: #fff; border-color: rgba(255,255,255,.25); }
+.day.has-photo { min-height: 72px; }

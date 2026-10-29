@@ -98,7 +98,7 @@ function useAssign(ctx, meal) {
   return (day) => {
     const needsCard = meal.type === 'samen' || (meal.extras_on && (meal.extras || []).length);
     if (needsCard) { ctx.startSwipe({ mode: 'one', mealId: meal.id, targetDay: day }); return; }
-    ctx.actions.assignMeal(day, meal, [], [], day === ctx.today ? 'Vanavond eten we ' + meal.name + '.' : meal.name + ' staat op ' + dayInfo(day).long + '.');
+    ctx.actions.assignMeal(day, meal, [], [], day === ctx.today ? 'Vanavond eten we ' + meal.name + '.' : meal.name + ' staat op ' + dayInfo(day).long.toLowerCase() + '.');
     ctx.setSheet(null);
   };
 }

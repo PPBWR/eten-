@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { dayInfo, programDays, slotFilled, partOptions, KIES, openDays } from './logic.js';
+import { dayInfo, programDays, slotFilled, partOptions, KIES, openDays, photoBg } from './logic.js';
 import { IcGear } from './icons.jsx';
 
 export async function shareText(text, say) {
@@ -88,7 +88,7 @@ export default function Week({ ctx }) {
 }
 
 function DayRow({ day, ctx, isStd }) {
-  const { d, today, setSheet } = ctx;
+  const { d, today, setSheet, photoUrls } = ctx;
   const s = d.slotsByDay[day] || {};
   const info = dayInfo(day);
   const m = s.meal_id ? d.mealsById[s.meal_id] : null;
@@ -107,9 +107,10 @@ function DayRow({ day, ctx, isStd }) {
   if (s.shopped) chip = 'Ingekocht';
   else if (mcat && mcat.counts_for_shopping === false) chip = 'Halen';
   else if (s.mode === 'cat' && cat && m) chip = cat.name;
-  const cls = 'day' + (day === today ? ' today' : info.wkd ? ' wkd' : '');
+  const photo = m && !s.mark && m.photo_path ? photoUrls[m.photo_path] : null;
+  const cls = 'day' + (day === today ? ' today' : info.wkd ? ' wkd' : '') + (photo ? ' has-photo' : '');
   return (
-    <button className={cls} onClick={() => setSheet({ type: 'slot', day })}>
+    <button className={cls} style={photo ? photoBg(photo) : null} onClick={() => setSheet({ type: 'slot', day })}>
       <div className="badge"><span>{info.dowCap}</span><b>{info.num}</b></div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div className={strong ? 'day-title' : 'day-title empty'}>{title}</div>
